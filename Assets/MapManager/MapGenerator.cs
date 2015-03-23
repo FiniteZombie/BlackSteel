@@ -1,152 +1,341 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
+
+public class Pair<X, Y> {
+    private X _x;
+    private Y _y;
+
+    public Pair(X first, Y second) {
+        _x = first;
+        _y = second;
+    }
+
+    public X first { get { return _x; } }
+
+    public Y second { get { return _y; } }
+
+    public override bool Equals(object obj) {
+        if (obj == null)
+            return false;
+        if (obj == this)
+            return true;
+        Pair<X, Y> other = obj as Pair<X, Y>;
+        if (other == null)
+            return false;
+
+        return
+            (((first == null) && (other.first == null))
+                || ((first != null) && first.Equals(other.first)))
+                &&
+            (((second == null) && (other.second == null))
+                || ((second != null) && second.Equals(other.second)));
+    }
+
+    public override int GetHashCode() {
+        int hashcode = 0;
+        if (first != null)
+            hashcode += first.GetHashCode();
+        if (second != null)
+            hashcode += second.GetHashCode();
+
+        return hashcode;
+    }
+
+    public override string ToString() {
+        return "<" + _x + ", " + _y + ">";
+    }
+}
+
+public class Edge<X, Y> : Pair<X, Y> {
+    private X _x;
+    private Y _y;
+
+    public Edge(X first, Y second)
+    : base(first, second) { }
+
+    public override bool Equals(object obj) {
+        if (obj == null)
+            return false;
+        if (obj == this)
+            return true;
+        Edge<X, Y> other = obj as Edge<X, Y>;
+        if (other == null)
+            return false;
+
+        return
+            (
+                (((first == null) && (other.first == null))
+                    || ((first != null) && first.Equals(other.first)))
+                  &&
+                (((second == null) && (other.second == null))
+                    || ((second != null) && second.Equals(other.second)))
+            )
+            ||
+            (
+                (((first == null) && (other.second == null))
+                    || ((first != null) && first.Equals(other.second)))
+                  &&
+                (((second == null) && (other.first == null))
+                    || ((second != null) && second.Equals(other.first)))
+            );
+    }
+}
+
+public class Edge2 : Edge<Vector2, Vector2> {
+    public Edge2(Vector2 first, Vector2 second)
+        : base(first, second) { }
+}
+
+public class Edge3 : Edge<Vector3, Vector3> {
+    public Edge3(Vector3 first, Vector3 second)
+        : base(first, second) { }
+}
 
 public class MapGenerator : MonoBehaviour {
-    //public Vector3[] newVertices;
-    //public Vector2[] newUV;
-    //public int[] newTriangles;
-    //public Mesh wallMesh;
+    float wallHeight = 1;
+    float wallWidth = 2;
+    MeshFilter filter;
 
     // Use this for prep
     void Wake() {
-        //newVertices = new Vector3[4];
-        //newVertices[0] = new Vector3(0, 0, 0);
-        //newVertices[1] = new Vector3(0, 1, 0);
-        //newVertices[2] = new Vector3(1, 1, 0);
-        //newVertices[3] = new Vector3(1, 0, 0);
-        //newUV = new Vector2[newVertices.Length];
-
-        //for (int i = 0; i < newUV.Length; i++) {
-        //    newUV[i] = new Vector2(newVertices[i].x, newVertices[i].y);
-        //}
-
-        //newTriangles = new int[6];
-        //newTriangles[0] = 0;
-        //newTriangles[1] = 1;
-        //newTriangles[2] = 2;
-        //newTriangles[3] = 2;
-        //newTriangles[4] = 3;
-        //newTriangles[5] = 0;
     }
 
     // Use this for initialization
     void Start() {
+        filter = transform.FindChild("Wall").GetComponent<MeshFilter>();
         GenerateMap();
-
-        //wallMesh = new Mesh();
-        //GetComponent<MeshFilter>().mesh = wallMesh;
-        //wallMesh.vertices = newVertices;
-        //wallMesh.uv = newUV;
-        //wallMesh.triangles = newTriangles;
-
-        // You can change that line to provide another MeshFilter
-        //MeshFilter filter = gameObject.AddComponent<MeshFilter>();
-        //Mesh mesh = filter.mesh;
-        //mesh.Clear();
-
-        //float length = 1f;
-        //float width = 1f;
-        //int resX = 2; // 2 minimum
-        //int resZ = 2;
-
-        //#region Vertices
-        //Vector3[] vertices = new Vector3[resX * resZ];
-        //for (int z = 0; z < resZ; z++) {
-        //    // [ -length / 2, length / 2 ]
-        //    float zPos = ((float)z / (resZ - 1) - .5f) * length;
-        //    for (int x = 0; x < resX; x++) {
-        //        // [ -width / 2, width / 2 ]
-        //        float xPos = ((float)x / (resX - 1) - .5f) * width;
-        //        vertices[x + z * resX] = new Vector3(xPos, 0f, zPos);
-        //    }
-        //}
-        //#endregion
-
-        //#region Normales
-        //Vector3[] normales = new Vector3[vertices.Length];
-        //for (int n = 0; n < normales.Length; n++)
-        //    normales[n] = Vector3.up;
-        //#endregion
-
-        //#region UVs
-        //Vector2[] uvs = new Vector2[vertices.Length];
-        //for (int v = 0; v < resZ; v++) {
-        //    for (int u = 0; u < resX; u++) {
-        //        uvs[u + v * resX] = new Vector2((float)u / (resX - 1), (float)v / (resZ - 1));
-        //    }
-        //}
-        //#endregion
-
-        //#region Triangles
-        //int nbFaces = (resX - 1) * (resZ - 1);
-        //int[] triangles = new int[nbFaces * 6];
-        //int t = 0;
-        //for (int face = 0; face < nbFaces; face++) {
-        //    // Retrieve lower left corner from face ind
-        //    int i = face % (resX - 1) + (face / (resZ - 1) * resX);
-
-        //    triangles[t++] = i + resX;
-        //    triangles[t++] = i + 1;
-        //    triangles[t++] = i;
-
-        //    triangles[t++] = i + resX;
-        //    triangles[t++] = i + resX + 1;
-        //    triangles[t++] = i + 1;
-        //}
-        //#endregion
-
-        //mesh.vertices = vertices;
-        //mesh.normals = normales;
-        //mesh.uv = uvs;
-        //mesh.triangles = triangles;
-
-        //mesh.RecalculateBounds();
-        //mesh.Optimize();
     }
 
     // Update is called once per frame
     void Update() {
-        //Debug.DrawLine(Vector3.zero, new Vector3(1, 0, 0), Color.red);
-        //Debug.DrawLine(Vector3.zero, new Vector3(0, 1, 0), Color.blue);
+        for (int i = 1; i < filter.mesh.vertexCount; i+=2) {
+            int next = i + 2;
+            if (next >= filter.mesh.vertexCount)
+                next = 1;
+            Debug.DrawLine(filter.mesh.vertices[i], filter.mesh.vertices[next], Color.red);
+        }
     }
 
     void GenerateMap() {
-        MeshFilter filter = transform.FindChild("Wall").GetComponent<MeshFilter>();
-        //foreach (Vector3 vert in filter.mesh.vertices) {
-        //    Debug.Log(vert, gameObject);
-        //}
+        List<List<Vector2>> wallIslands = GenerateEdgeIslands();
+        Debug.Log(edgeIslandsToString(wallIslands));
 
-        Debug.Log("Verts:", gameObject);
-        foreach (Vector3 vert in filter.mesh.vertices) {
-            Debug.Log(vert, gameObject);
+        filter.mesh.vertices = GenerateVertices(wallIslands);
+        filter.mesh.uv = GenerateUVs(wallIslands);
+        filter.mesh.triangles = GenerateTriangles(wallIslands);
+
+        filter.mesh.RecalculateBounds();
+        filter.mesh.Optimize();
+        filter.mesh.RecalculateNormals();
+    }
+
+    List<List<Vector2>> GenerateEdgeIslands() {
+        return LoadMap("Default");
+    }
+
+    /*       -----
+     * quad= | / |
+     *       -----
+     * path index:      0   1   2   3   0
+     *      
+     * vertex index:    1   3   5   7   1
+     *                  -----------------
+     * triangles:       | / | / | / | / |
+     *                  -----------------
+     * vertex index:    0   2   4   6   0
+    */
+
+    Vector3[] GenerateVertices(List<List<Vector2>> wallIslands) {
+        int numVerts = 0;
+        foreach (List<Vector2> wallPath in wallIslands) {
+            numVerts += 2 * wallPath.Count;
         }
 
-        Debug.Log("UVs:", gameObject);
-        foreach (Vector2 uv in filter.mesh.uv) {
-            Debug.Log(uv, gameObject);
+        Vector3[] vertices = new Vector3[numVerts];
+
+        int i = 0;
+        foreach (List<Vector2> wallPath in wallIslands) {
+            foreach (Vector2 point in wallPath) {
+                vertices[i++] = new Vector3(wallWidth * point.x, 0, wallWidth * point.y);
+                vertices[i++] = new Vector3(wallWidth * point.x, wallHeight, wallWidth * point.y);
+            }
         }
 
-        Vector3[] vertices = filter.mesh.vertices;
-        vertices[0] = new Vector3(0, 0, 0);
-        vertices[1] = new Vector3(0, 1, 0);
-        vertices[2] = new Vector3(5, 1, 0);
-        vertices[3] = new Vector3(5, 0, 0);
-        filter.mesh.vertices = vertices;
+        return vertices;
+    }
 
-        Vector2[] newUVs = new Vector2[filter.mesh.vertices.Length];
-        newUVs[0] = new Vector2(0, 0);
-        newUVs[1] = new Vector2(0, 1);
-        newUVs[2] = new Vector2(5, 1);
-        newUVs[3] = new Vector2(5, 0);
-        filter.mesh.uv = newUVs;
+    int[] GenerateTriangles(List<List<Vector2>> wallIslands) {
+        int numTriangles = 0;
+        foreach (List<Vector2> wallPath in wallIslands) {
+            numTriangles += 2 * (wallPath.Count - 1);
+        }
 
-        int[] newTriangles = new int[6];
-        newTriangles[0] = 0;
-        newTriangles[1] = 1;
-        newTriangles[2] = 2;
-        newTriangles[3] = 2;
-        newTriangles[4] = 3;
-        newTriangles[5] = 0;
-        filter.mesh.triangles = newTriangles;
+        int[] triangles = new int[3 * numTriangles];
+        int triIndex = 0;
+        foreach (List<Vector2> wallPath in wallIslands) {
+            for (int pathIndex = 0; pathIndex < (wallPath.Count - 1); pathIndex++) {
+                int vertIndex = 2 * pathIndex;
+
+                triangles[triIndex++] = vertIndex + 3; // 1 ---- 0
+                triangles[triIndex++] = vertIndex + 1; //   | / 
+                triangles[triIndex++] = vertIndex;     // 2 -
+
+                triangles[triIndex++] = vertIndex;     //      - 5
+                triangles[triIndex++] = vertIndex + 2; //    / |
+                triangles[triIndex++] = vertIndex + 3; // 3 ---- 4
+            }
+        }
+
+        return triangles;
+    }
+
+    Vector2[] GenerateUVs(List<List<Vector2>> wallIslands) {
+        int numVerts = 0;
+        foreach (List<Vector2> wallPath in wallIslands) {
+            numVerts += 2 * wallPath.Count;
+        }
+
+        Vector2[] UVs = new Vector2[numVerts];
+        int i = 0;
+        foreach (List<Vector2> island in wallIslands) {
+            for (int j = 0; j < 2 * island.Count; j++) {
+                UVs[i++] = new Vector2(j / 2, j % 2);
+            }
+        }
+        return UVs;
+    }
+
+    List<List<Vector2>> LoadMap(string mapName) {
+        TextAsset mapTextAsset = Resources.Load(mapName) as TextAsset;
+        string[] mapLines = mapTextAsset.text.Split('\n');
+        string[] dimensions = mapLines[0].Split('x');
+        int mapWidth = int.Parse(dimensions[0]);
+        int mapHeight = int.Parse(dimensions[1]);
+
+        // Create a hash set of all edges. This is a quick way to get a set of all the edges
+        // and ignore all duplicates in one swing.
+        HashSet<Edge2> edgeSet = new HashSet<Edge2>();
+
+        // Start with adding the edges which make up the border
+        // North and South
+        for (int i = 0; i < mapWidth; i++) {
+            Vector2 a = new Vector2(i, 0);
+            Vector2 b = new Vector2(i + 1, 0);
+            edgeSet.Add(new Edge2(a, b));
+
+            a = new Vector2(i, mapHeight);
+            b = new Vector2(i + 1, mapHeight);
+            edgeSet.Add(new Edge2(a, b));
+        }
+
+        // West and East
+        for (int i = 0; i < mapHeight; i++) {
+            Vector2 a = new Vector2(0, i);
+            Vector2 b = new Vector2(0, i + 1);
+            edgeSet.Add(new Edge2(a, b));
+
+            a = new Vector2(mapWidth, i);
+            b = new Vector2(mapWidth, i + 1);
+            edgeSet.Add(new Edge2(a, b));
+        }
+
+        // Get edges from all wall blocks
+        for (int y = 0; y < mapHeight; y++) {
+            int lineNum = mapHeight - y;
+            for (int x = 0; x < mapWidth; x++) {
+                if (mapLines[lineNum][x] == 'w') {
+                    // North edge
+                    Vector2 a = new Vector2(x, y + 1);
+                    Vector2 b = new Vector2(x + 1, y + 1);
+                    Edge2 edge = new Edge2(a, b);
+                    if (!edgeSet.Remove(edge))
+                        edgeSet.Add(edge);
+
+                    // South edge
+                    a = new Vector2(x, y);
+                    b = new Vector2(x + 1, y);
+                    edge = new Edge2(a, b);
+                    if (!edgeSet.Remove(edge))
+                        edgeSet.Add(edge);
+
+                    // West edge
+                    a = new Vector2(x, y);
+                    b = new Vector2(x, y + 1);
+                    edge = new Edge2(a, b);
+                    if (!edgeSet.Remove(edge))
+                        edgeSet.Add(edge);
+
+                    // East edge
+                    a = new Vector2(x + 1, y);
+                    b = new Vector2(x + 1, y + 1);
+                    edge = new Edge2(a, b);
+                    if (!edgeSet.Remove(edge))
+                        edgeSet.Add(edge);
+                }
+            }
+        }
+
+        // Run though edge set and get individual edge islands
+        List<List<Vector2>> edgeIslands = new List<List<Vector2>>();
+        while (edgeSet.Count > 0) {
+            List<Vector2> wallPath = new List<Vector2>();
+            
+            IEnumerator<Edge2> en = edgeSet.GetEnumerator();
+            en.MoveNext();
+            Edge2 start = en.Current;
+            Edge2 current = start;
+            wallPath.Add(current.first);
+            edgeSet.Remove(current);
+
+            while (current.second != start.first) {
+                wallPath.Add(current.second);
+
+                Edge2 oldCurrent = new Edge2(current.first, current.second);
+                foreach (Edge2 edge in edgeSet) {
+                    if (edge == start)
+                        continue;
+
+                    if (edge.first == current.second) {
+                        current = edge;
+                        break;
+                    }
+                    else if (edge.second == current.second) {
+                        current = new Edge2(edge.second, edge.first);
+                        break;
+                    }
+                }
+
+                if (current == oldCurrent)
+                    throw new System.Exception("Infinite loop while iterating through edges.");
+
+                edgeSet.Remove(current);
+            }
+
+            wallPath.Add(start.first);
+            edgeIslands.Add(wallPath);
+        }
+
+        return edgeIslands;
+    }
+
+    string edgeIslandsToString(List<List<Vector2>> edgeIslands) {
+        string str = "";
+
+        int count = 0;
+        foreach (List<Vector2> island in edgeIslands) {
+            str += "Island: " + count + "\n";
+            int pointCount = 0;
+            foreach (Vector2 point in island) {
+                str += point + ", ";
+                pointCount++;
+                if (pointCount % 10 == 0)
+                    str += "\n";
+            }
+            str += "\n\n";
+            count++;
+        }
+
+        return str;
     }
 }
