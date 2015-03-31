@@ -25,8 +25,11 @@ public class PlayerManager : MonoBehaviour {
         }
     }
 
-    Dictionary<CommandType, List<KeyCode>> commandMap;
-    Dictionary<CommandType, CommandState> currentCommandStates;
+    public GameObject mapObject;
+    private MapManager mapManager;
+
+    private Dictionary<CommandType, List<KeyCode>> commandMap;
+    private Dictionary<CommandType, CommandState> currentCommandStates;
 
 	// Use this for initialization
 	void Start () {
@@ -43,6 +46,8 @@ public class PlayerManager : MonoBehaviour {
         commandMap[CommandType.MoveRight] = new List<KeyCode>(new KeyCode[] { KeyCode.D });
         commandMap[CommandType.RotateLeft] = new List<KeyCode>(new KeyCode[] { KeyCode.LeftArrow, KeyCode.Q });
         commandMap[CommandType.RotateRight] = new List<KeyCode>(new KeyCode[] { KeyCode.RightArrow, KeyCode.E });
+
+        mapManager = mapObject.GetComponent<MapManager>();
 	}
 
     void UpdateInput() {
@@ -66,11 +71,19 @@ public class PlayerManager : MonoBehaviour {
 	void Update () {
         UpdateInput();
 
+        float step = 2;
+
         if (currentCommandStates[CommandType.MoveForward].justPressed) {
-            transform.position += 2 * transform.TransformVector(Vector3.forward);
+            transform.position += step * transform.TransformVector(Vector3.forward);
         }
         if (currentCommandStates[CommandType.MoveBack].justPressed) {
-            transform.position -= 2 * transform.TransformVector(Vector3.forward);
+            transform.position += step * transform.TransformVector(Vector3.back);
+        }
+        if (currentCommandStates[CommandType.MoveLeft].justPressed) {
+            transform.position += step * transform.TransformVector(Vector3.left);
+        }
+        if (currentCommandStates[CommandType.MoveRight].justPressed) {
+            transform.position += step * transform.TransformVector(Vector3.right);
         }
         if (currentCommandStates[CommandType.RotateLeft].justPressed) {
             transform.Rotate(Vector3.up, -90);

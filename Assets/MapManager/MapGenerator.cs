@@ -52,7 +52,7 @@ public class Edge<X, Y> : Pair<X, Y> {
     private Y _y;
 
     public Edge(X first, Y second)
-    : base(first, second) { }
+        : base(first, second) { }
 
     public override bool Equals(object obj) {
         if (obj == null)
@@ -93,31 +93,45 @@ public class Edge3 : Edge<Vector3, Vector3> {
 }
 
 public class MapGenerator : MonoBehaviour {
-    float wallHeight = 1;
-    float wallWidth = 2;
+    public float wallHeight;
+    public float wallWidth;
     MeshFilter filter;
 
-    // Use this for prep
-    void Wake() {
+    void Awake() {
     }
 
-    // Use this for initialization
+	// Use this for initialization
     void Start() {
         filter = transform.FindChild("Wall").GetComponent<MeshFilter>();
-        GenerateMap();
-    }
-
-    // Update is called once per frame
+	}
+	
+	// Update is called once per frame
     void Update() {
-        for (int i = 1; i < filter.mesh.vertexCount; i+=2) {
+        for (int i = 1; i < filter.mesh.vertexCount; i += 2) {
             int next = i + 2;
             if (next >= filter.mesh.vertexCount)
                 next = 1;
             Debug.DrawLine(filter.mesh.vertices[i], filter.mesh.vertices[next], Color.red);
         }
+
     }
 
-    void GenerateMap() {
+    /*
+     * Map Generation
+     * --------------
+     * 
+     *       -----
+     * quad= | / |
+     *       -----
+     * path index:      0   1   2   3   0
+     *      
+     * vertex index:    1   3   5   7   1
+     *                  -----------------
+     * triangles:       | / | / | / | / |
+     *                  -----------------
+     * vertex index:    0   2   4   6   0
+    */
+    public void GenerateMap() {
         List<List<Vector2>> wallIslands = GenerateEdgeIslands();
         Debug.Log(edgeIslandsToString(wallIslands));
 
@@ -130,23 +144,11 @@ public class MapGenerator : MonoBehaviour {
         filter.mesh.RecalculateNormals();
     }
 
-    List<List<Vector2>> GenerateEdgeIslands() {
+    private List<List<Vector2>> GenerateEdgeIslands() {
         return LoadMap("Default");
     }
 
-    /*       -----
-     * quad= | / |
-     *       -----
-     * path index:      0   1   2   3   0
-     *      
-     * vertex index:    1   3   5   7   1
-     *                  -----------------
-     * triangles:       | / | / | / | / |
-     *                  -----------------
-     * vertex index:    0   2   4   6   0
-    */
-
-    Vector3[] GenerateVertices(List<List<Vector2>> wallIslands) {
+    private Vector3[] GenerateVertices(List<List<Vector2>> wallIslands) {
         int numVerts = 0;
         foreach (List<Vector2> wallPath in wallIslands) {
             numVerts += 2 * wallPath.Count;
@@ -165,7 +167,7 @@ public class MapGenerator : MonoBehaviour {
         return vertices;
     }
 
-    int[] GenerateTriangles(List<List<Vector2>> wallIslands) {
+    private int[] GenerateTriangles(List<List<Vector2>> wallIslands) {
         int numTriangles = 0;
         foreach (List<Vector2> wallPath in wallIslands) {
             numTriangles += 2 * (wallPath.Count - 1);
@@ -190,7 +192,7 @@ public class MapGenerator : MonoBehaviour {
         return triangles;
     }
 
-    Vector2[] GenerateUVs(List<List<Vector2>> wallIslands) {
+    private Vector2[] GenerateUVs(List<List<Vector2>> wallIslands) {
         int numVerts = 0;
         foreach (List<Vector2> wallPath in wallIslands) {
             numVerts += 2 * wallPath.Count;
@@ -206,7 +208,7 @@ public class MapGenerator : MonoBehaviour {
         return UVs;
     }
 
-    List<List<Vector2>> LoadMap(string mapName) {
+    private List<List<Vector2>> LoadMap(string mapName) {
         TextAsset mapTextAsset = Resources.Load(mapName) as TextAsset;
         string[] mapLines = mapTextAsset.text.Split('\n');
         string[] dimensions = mapLines[0].Split('x');
@@ -280,7 +282,7 @@ public class MapGenerator : MonoBehaviour {
         List<List<Vector2>> edgeIslands = new List<List<Vector2>>();
         while (edgeSet.Count > 0) {
             List<Vector2> wallPath = new List<Vector2>();
-            
+
             IEnumerator<Edge2> en = edgeSet.GetEnumerator();
             en.MoveNext();
             Edge2 start = en.Current;
@@ -319,7 +321,7 @@ public class MapGenerator : MonoBehaviour {
         return edgeIslands;
     }
 
-    string edgeIslandsToString(List<List<Vector2>> edgeIslands) {
+    private string edgeIslandsToString(List<List<Vector2>> edgeIslands) {
         string str = "";
 
         int count = 0;

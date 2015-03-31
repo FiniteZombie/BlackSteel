@@ -390,6 +390,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8f2c5c9863490f241a57ddff389b1c1f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mapObject: {fileID: 1864937483}
 --- !u!1 &1864937483
 GameObject:
   m_ObjectHideFlags: 0
@@ -399,6 +400,7 @@ GameObject:
   m_Component:
   - 4: {fileID: 1864937485}
   - 114: {fileID: 1864937484}
+  - 114: {fileID: 1864937486}
   m_Layer: 0
   m_Name: Map
   m_TagString: Untagged
@@ -417,6 +419,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf7e4118ba31f6b4ea94dc73f02993c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  wallHeight: 1
+  wallWidth: 2
 --- !u!4 &1864937485
 Transform:
   m_ObjectHideFlags: 0
@@ -430,3 +434,16 @@ Transform:
   - {fileID: 1001182211}
   m_Father: {fileID: 0}
   m_RootOrder: 1
+--- !u!114 &1864937486
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1864937483}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 696349c7792bd024e9aee36607f1cec3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  wallHeight: 0
+  wallWidth: 0
