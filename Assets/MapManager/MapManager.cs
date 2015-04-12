@@ -6,12 +6,6 @@ public class MapManager : MonoBehaviour {
     public float wallHeight = 1;
     public float wallWidth = 2;
 
-    public enum UnitTypes {
-        Player,
-        Creature,
-        Item
-    }
-
     private MapGenerator mapGenerator;
 
     // Use this for prep

@@ -102,7 +102,6 @@ public class MapGenerator : MonoBehaviour {
 
 	// Use this for initialization
     void Start() {
-        filter = transform.FindChild("Wall").GetComponent<MeshFilter>();
 	}
 	
 	// Update is called once per frame
@@ -132,8 +131,10 @@ public class MapGenerator : MonoBehaviour {
      * vertex index:    0   2   4   6   0
     */
     public void GenerateMap() {
+        filter = transform.FindChild("Wall").GetComponent<MeshFilter>();
         List<List<Vector2>> wallIslands = GenerateEdgeIslands();
-        Debug.Log(edgeIslandsToString(wallIslands));
+        //Debug.Log(edgeIslandsToString(wallIslands));
+        Debug.Log("Map generated.");
 
         filter.mesh.vertices = GenerateVertices(wallIslands);
         filter.mesh.uv = GenerateUVs(wallIslands);
