@@ -26,6 +26,7 @@ public class PlayerManager : MonoBehaviour {
     }
 
     public GameObject mapObject;
+    public CombatManager combatManager;
     private MapManager mapManager;
 
     private Dictionary<CommandType, List<KeyCode>> commandMap;
@@ -73,23 +74,25 @@ public class PlayerManager : MonoBehaviour {
 
         float step = 2;
 
-        if (currentCommandStates[CommandType.MoveForward].justPressed) {
-            transform.position += step * transform.TransformVector(Vector3.forward);
-        }
-        if (currentCommandStates[CommandType.MoveBack].justPressed) {
-            transform.position += step * transform.TransformVector(Vector3.back);
-        }
-        if (currentCommandStates[CommandType.MoveLeft].justPressed) {
-            transform.position += step * transform.TransformVector(Vector3.left);
-        }
-        if (currentCommandStates[CommandType.MoveRight].justPressed) {
-            transform.position += step * transform.TransformVector(Vector3.right);
-        }
-        if (currentCommandStates[CommandType.RotateLeft].justPressed) {
-            transform.Rotate(Vector3.up, -90);
-        }
-        if (currentCommandStates[CommandType.RotateRight].justPressed) {
-            transform.Rotate(Vector3.up, 90);
+        if (!combatManager.isCombatRunning) {
+            if (currentCommandStates[CommandType.MoveForward].justPressed) {
+                transform.position += step * transform.TransformVector(Vector3.forward);
+            }
+            if (currentCommandStates[CommandType.MoveBack].justPressed) {
+                transform.position += step * transform.TransformVector(Vector3.back);
+            }
+            if (currentCommandStates[CommandType.MoveLeft].justPressed) {
+                transform.position += step * transform.TransformVector(Vector3.left);
+            }
+            if (currentCommandStates[CommandType.MoveRight].justPressed) {
+                transform.position += step * transform.TransformVector(Vector3.right);
+            }
+            if (currentCommandStates[CommandType.RotateLeft].justPressed) {
+                transform.Rotate(Vector3.up, -90);
+            }
+            if (currentCommandStates[CommandType.RotateRight].justPressed) {
+                transform.Rotate(Vector3.up, 90);
+            }
         }
 	}
 }

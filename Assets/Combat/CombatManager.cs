@@ -4,10 +4,10 @@ using System.Collections;
 public class CombatManager : MonoBehaviour {
 
     protected class CombatData {
-        public ActorData playerData;
-        public ActorData enemyData;
+        public Actor playerData;
+        public Actor enemyData;
 
-        public CombatData(ActorData _playerData, ActorData _enemyData) {
+        public CombatData(Actor _playerData, Actor _enemyData) {
             playerData = _playerData;
             enemyData = _enemyData;
         }
@@ -35,10 +35,12 @@ public class CombatManager : MonoBehaviour {
         if (isCombatRunning) {
             if (Input.GetKeyDown(KeyCode.Escape))
                 EndCombat();
+            if (Input.GetKeyDown(KeyCode.RightArrow))
+                StepCombat();
         }
     }
 
-    public void StartCombat(ActorData playerData, ActorData enemyData) {
+    public void StartCombat(Actor playerData, Actor enemyData) {
         Debug.Log("Combat Starting");
         combatData = new CombatData(playerData, enemyData);
     }
