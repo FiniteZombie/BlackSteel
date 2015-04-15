@@ -473,6 +473,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mapObject: {fileID: 1864937483}
+  combatManager: {fileID: 1168897081}
 --- !u!1 &1864937483
 GameObject:
   m_ObjectHideFlags: 0
