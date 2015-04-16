@@ -59,8 +59,11 @@ public class Actor {
     public CombatAction previousAction;
 
     public Actor() {
-        HeldEquipment blocker = (equippedShield != null) ? equippedShield : equippedWeapon;
-        previousAction = new CombatAction(CombatActionType.Block, equippedShield, )
+        HeldEquipment blocker = equippedShield;
+        if (blocker == null) // Use defensive stats of weapon if no shield equipped.
+            blocker = equippedWeapon;
+
+        previousAction = new CombatAction(CombatActionType.Block, equippedShield);
     }
 
     public List<CombatAction> getAvailableCombatActions() {
