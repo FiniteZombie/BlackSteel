@@ -8,6 +8,8 @@ public class GameManager : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+        CombatActionGraph.GenerateGraph();
+
         // Init player
         playerData = new Actor();
         playerData.health = 50;

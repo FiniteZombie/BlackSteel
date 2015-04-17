@@ -12,7 +12,8 @@ public enum SelectionType {
 
 public class WeaponStyle {
     public string name;
-    public int windUpDepth;
+    public int maxWindUpDepth;
+    public int minWindUpDepth;
     public int damageModifier; // in percent
     public SelectionType targetSelectionType;
 }
