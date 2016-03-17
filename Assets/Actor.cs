@@ -2,21 +2,25 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public enum ActorType {
+public enum ActorType
+{
     Player,
     Creature,
     Item
 }
 
-public class Actor {
-    public struct CombatActorState {
+public class Actor
+{
+    public class CombatActorState
+    {
         public CombatAction prevAction;
         public WeaponStyle weaponStyle;
         public List<Vector2> targetArea;
         public int windUpLevel;
         public int offBalanceLevel;
 
-        public CombatActorState() {
+        public CombatActorState()
+        {
             prevAction = null;
             weaponStyle = null;
             targetArea = null;
@@ -24,7 +28,8 @@ public class Actor {
             offBalanceLevel = 0;
         }
 
-        public void Clear() {
+        public void Clear()
+        {
             prevAction = null;
             weaponStyle = null;
             targetArea = null;
@@ -40,19 +45,24 @@ public class Actor {
     public Shield shield;
     public CombatActorState combatState;
 
-    public Actor() {
+    public Actor()
+    {
         combatState = new CombatActorState();
     }
 
-    public List<CombatAction> getAvailableCombatActions() {
+    public List<CombatAction> getAvailableCombatActions()
+    {
         List<CombatAction> actionList = new List<CombatAction>();
         List<CombatActionType> potentialActions = CombatActionGraph.GetAvailableActions(combatState.prevAction);
 
-        foreach (CombatActionType actionType in potentialActions) {
+        foreach (CombatActionType actionType in potentialActions)
+        {
             CombatAction action = new CombatAction();
-            switch (actionType) {
+            switch (actionType)
+            {
                 case CombatActionType.Block:
-                    if (shield != null) {
+                    if (shield != null)
+                    {
                         action.InitBlock(shield, combatState.offBalanceLevel);
                     }
                     break;
@@ -61,7 +71,7 @@ public class Actor {
                     break;
                 case CombatActionType.WindUp:
                     if (combatState.windUpLevel < combatState.weaponStyle.maxWindUpDepth)
-                    action.InitWindUp(weapon, combatState.weaponStyle, combatState.windUpLevel);
+                        action.InitWindUp(weapon, combatState.weaponStyle, combatState.windUpLevel);
                     break;
                 case CombatActionType.SwitchStyle:
                     action.InitSwitchStyle(weapon, combatState.windUpLevel);

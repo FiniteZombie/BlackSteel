@@ -34,7 +34,7 @@ public class CombatAction {
     public int damageReduction {
         get {
             // damage redutcion is halved for each level off balance
-            float modifier = Mathf.Pow(.5f, float(offBalance));
+            float modifier = Mathf.Pow(.5f, (float) offBalance);
             float total = prop.damageReduction * modifier;
             return Mathf.RoundToInt(total);
         }

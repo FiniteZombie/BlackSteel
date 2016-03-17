@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 
 public class PlayerManager : MonoBehaviour {
@@ -27,7 +26,6 @@ public class PlayerManager : MonoBehaviour {
 
     public GameObject mapObject;
     public CombatManager combatManager;
-    private MapManager mapManager;
 
     private Dictionary<CommandType, List<KeyCode>> commandMap;
     private Dictionary<CommandType, CommandState> currentCommandStates;
@@ -47,8 +45,6 @@ public class PlayerManager : MonoBehaviour {
         commandMap[CommandType.MoveRight] = new List<KeyCode>(new KeyCode[] { KeyCode.D });
         commandMap[CommandType.RotateLeft] = new List<KeyCode>(new KeyCode[] { KeyCode.LeftArrow, KeyCode.Q });
         commandMap[CommandType.RotateRight] = new List<KeyCode>(new KeyCode[] { KeyCode.RightArrow, KeyCode.E });
-
-        mapManager = mapObject.GetComponent<MapManager>();
 	}
 
     void UpdateInput() {
