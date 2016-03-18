@@ -33,6 +33,8 @@ public class Player : MonoBehaviour
 
     public Vector3 StartingPosition;
 
+    public float Step;
+
     private Dictionary<CommandType, List<KeyCode>> commandMap;
     private Dictionary<CommandType, CommandState> currentCommandStates;
 
@@ -81,25 +83,23 @@ public class Player : MonoBehaviour
     {
         UpdateInput();
 
-        float step = 2;
-
         if (!CombatManager.isCombatRunning)
         {
             if (currentCommandStates[CommandType.MoveForward].justPressed)
             {
-                transform.position += step * transform.TransformVector(Vector3.forward);
+                transform.position += Step * transform.TransformVector(Vector3.forward);
             }
             if (currentCommandStates[CommandType.MoveBack].justPressed)
             {
-                transform.position += step * transform.TransformVector(Vector3.back);
+                transform.position += Step * transform.TransformVector(Vector3.back);
             }
             if (currentCommandStates[CommandType.MoveLeft].justPressed)
             {
-                transform.position += step * transform.TransformVector(Vector3.left);
+                transform.position += Step * transform.TransformVector(Vector3.left);
             }
             if (currentCommandStates[CommandType.MoveRight].justPressed)
             {
-                transform.position += step * transform.TransformVector(Vector3.right);
+                transform.position += Step * transform.TransformVector(Vector3.right);
             }
             if (currentCommandStates[CommandType.RotateLeft].justPressed)
             {

@@ -1,29 +1,33 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class Map : MonoBehaviour
 {
     public MapGenerator MapGenerator;
 
-    private MeshFilter _wallMesh;
+    private List<MeshFilter> _wall;
 
     // Use this for initialization
     void Start()
     {
-        _wallMesh = MapGenerator.GenerateMap();
+        _wall = MapGenerator.GenerateMap(this.transform);
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (_wallMesh != null)
+        if (_wall != null && _wall.Count > 0)
         {
-            for (int i = 1; i < _wallMesh.mesh.vertexCount; i += 2)
+            foreach (var wallMesh in _wall)
             {
-                int next = i + 2;
-                if (next >= _wallMesh.mesh.vertexCount)
-                    next = 1;
-                Debug.DrawLine(_wallMesh.mesh.vertices[i], _wallMesh.mesh.vertices[next], Color.red);
+                for (int i = 1; i < wallMesh.mesh.vertexCount; i += 2)
+                {
+                    int next = i + 2;
+                    if (next >= wallMesh.mesh.vertexCount)
+                        next = 1;
+                    Debug.DrawLine(wallMesh.mesh.vertices[i], wallMesh.mesh.vertices[next], Color.red);
+                }
             }
         }
     }

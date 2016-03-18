@@ -5,13 +5,55 @@ using Assets.Scripts.MapUtil;
 
 public class MapGenerator : MonoBehaviour
 {
-    public Map Map;
     public float WallHeight;
     public float WallWidth;
     public MeshFilter WallPrefab;
 
-    /*
-     * Map Generation
+    public List<MeshFilter> GenerateMap(Transform parent)
+    {
+        var walls = new List<MeshFilter>();
+        List<List<Vector2>> wallIslands = GenerateEdgeIslands(LoadMap("Default"));
+
+        foreach (var island in wallIslands)
+        {
+            var rotateInc = 0;
+
+            for (var i = 0; i < island.Count - 1; i++)
+            {
+                var currentPoint = island[i];
+                var nextPoint = (i + 1) >= island.Count
+                    ? island[0]
+                    : island[i + 1];
+
+                var currentWorldPoint = new Vector3(WallWidth * currentPoint.x, .5f * WallHeight, WallWidth * currentPoint.y);
+                var nextWorldPoint = new Vector3(WallWidth * nextPoint.x, .5f * WallHeight, WallWidth * nextPoint.y);
+
+                Debug.DrawLine(currentWorldPoint + Vector3.up, nextWorldPoint + Vector3.up, Color.yellow, 20f);
+
+                var worldMidpoint = Vector3.Lerp(currentWorldPoint, nextWorldPoint, .5f);
+                var worldDirection = nextWorldPoint - currentWorldPoint;
+                var wallForward = Vector3.Cross(Vector3.up, worldDirection.normalized);
+                
+                var wall = Instantiate(WallPrefab);
+                wall.transform.SetParent(parent);
+                wall.transform.localPosition = worldMidpoint;
+                wall.transform.forward = wallForward;
+                wall.transform.localScale = new Vector3(WallWidth, WallHeight, 1);
+
+                var rotateMult = rotateInc % 2;
+                rotateInc++;
+
+                wall.transform.RotateAround(wall.transform.position, wall.transform.forward, rotateMult * 180f);
+
+                walls.Add(wall);
+            }
+        }
+
+        return walls;
+    }
+
+    /* 
+     * Old Map Generation
      * --------------
      * 
      *       -----
@@ -25,12 +67,11 @@ public class MapGenerator : MonoBehaviour
      *                  -----------------
      * vertex index:    0   2   4   6   0
     */
-    public MeshFilter GenerateMap()
+    public MeshFilter OldGenerateMap()
     {
         var wallMeshFilter = Instantiate(WallPrefab);
-        wallMeshFilter.gameObject.transform.SetParent(Map.transform);
 
-        List<List<Vector2>> wallIslands = GenerateEdgeIslands();
+        List<List<Vector2>> wallIslands = GenerateEdgeIslands(LoadMap("Default"));
         //Debug.Log(edgeIslandsToString(wallIslands));
         Debug.Log("Map generated.");
 
@@ -44,9 +85,54 @@ public class MapGenerator : MonoBehaviour
         return wallMeshFilter;
     }
 
-    private List<List<Vector2>> GenerateEdgeIslands()
+    private List<List<Vector2>> GenerateEdgeIslands(HashSet<Edge2> edgeSet)
     {
-        return LoadMap("Default");
+        // Run though edge set and get individual edge islands
+        List<List<Vector2>> edgeIslands = new List<List<Vector2>>();
+        while (edgeSet.Count > 0)
+        {
+            List<Vector2> wallPath = new List<Vector2>();
+
+            IEnumerator<Edge2> en = edgeSet.GetEnumerator();
+            en.MoveNext();
+            Edge2 start = en.Current;
+            Edge2 current = start;
+            wallPath.Add(current.first);
+            edgeSet.Remove(current);
+
+            while (current.second != start.first)
+            {
+                wallPath.Add(current.second);
+
+                Edge2 oldCurrent = new Edge2(current.first, current.second);
+                foreach (Edge2 edge in edgeSet)
+                {
+                    if (edge == start)
+                        continue;
+
+                    if (edge.first == current.second)
+                    {
+                        current = edge;
+                        break;
+                    }
+                    else if (edge.second == current.second)
+                    {
+                        current = new Edge2(edge.second, edge.first);
+                        break;
+                    }
+                }
+
+                if (current == oldCurrent)
+                    throw new System.Exception("Infinite loop while iterating through edges.");
+
+                edgeSet.Remove(current);
+            }
+
+            wallPath.Add(start.first);
+            edgeIslands.Add(wallPath);
+        }
+
+        return edgeIslands;
     }
 
     private Vector3[] GenerateVertices(List<List<Vector2>> wallIslands)
@@ -121,7 +207,7 @@ public class MapGenerator : MonoBehaviour
         return UVs;
     }
 
-    private List<List<Vector2>> LoadMap(string mapName)
+    private HashSet<Edge2> LoadMap(string mapName)
     {
         TextAsset mapTextAsset = Resources.Load(mapName) as TextAsset;
         string[] mapLines = mapTextAsset.text.Split('\n');
@@ -197,52 +283,7 @@ public class MapGenerator : MonoBehaviour
             }
         }
 
-        // Run though edge set and get individual edge islands
-        List<List<Vector2>> edgeIslands = new List<List<Vector2>>();
-        while (edgeSet.Count > 0)
-        {
-            List<Vector2> wallPath = new List<Vector2>();
-
-            IEnumerator<Edge2> en = edgeSet.GetEnumerator();
-            en.MoveNext();
-            Edge2 start = en.Current;
-            Edge2 current = start;
-            wallPath.Add(current.first);
-            edgeSet.Remove(current);
-
-            while (current.second != start.first)
-            {
-                wallPath.Add(current.second);
-
-                Edge2 oldCurrent = new Edge2(current.first, current.second);
-                foreach (Edge2 edge in edgeSet)
-                {
-                    if (edge == start)
-                        continue;
-
-                    if (edge.first == current.second)
-                    {
-                        current = edge;
-                        break;
-                    }
-                    else if (edge.second == current.second)
-                    {
-                        current = new Edge2(edge.second, edge.first);
-                        break;
-                    }
-                }
-
-                if (current == oldCurrent)
-                    throw new System.Exception("Infinite loop while iterating through edges.");
-
-                edgeSet.Remove(current);
-            }
-
-            wallPath.Add(start.first);
-            edgeIslands.Add(wallPath);
-        }
-
-        return edgeIslands;
+        return edgeSet;
     }
 
     private string edgeIslandsToString(List<List<Vector2>> edgeIslands)
