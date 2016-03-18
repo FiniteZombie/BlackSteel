@@ -1,9 +1,11 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-public class PlayerManager : MonoBehaviour {
+public class Player : MonoBehaviour
+{
 
-    enum CommandType {
+    enum CommandType
+    {
         MoveForward = 0,
         MoveBack,
         MoveRight,
@@ -12,30 +14,37 @@ public class PlayerManager : MonoBehaviour {
         RotateLeft
     };
 
-    private class CommandState {
+    private class CommandState
+    {
         public bool isPressed;
         public bool justPressed;
         public bool justReleased;
 
-        public CommandState() {
+        public CommandState()
+        {
             isPressed = false;
             justPressed = false;
             justReleased = false;
         }
     }
 
-    public GameObject mapObject;
-    public CombatManager combatManager;
+    public GameObject MapObject;
+    public CombatManager CombatManager;
+
+    public Vector3 StartingPosition;
 
     private Dictionary<CommandType, List<KeyCode>> commandMap;
     private Dictionary<CommandType, CommandState> currentCommandStates;
 
-	// Use this for initialization
-	void Start () {
-        commandMap = new Dictionary<CommandType,List<KeyCode>>();
-        currentCommandStates = new Dictionary<CommandType,CommandState>();
+    // Use this for initialization
+    void Start()
+    {
+        gameObject.transform.position = StartingPosition;
+        commandMap = new Dictionary<CommandType, List<KeyCode>>();
+        currentCommandStates = new Dictionary<CommandType, CommandState>();
 
-        foreach (CommandType type in System.Enum.GetValues(typeof(CommandType))) {
+        foreach (CommandType type in System.Enum.GetValues(typeof(CommandType)))
+        {
             currentCommandStates[type] = new CommandState();
         }
 
@@ -45,15 +54,18 @@ public class PlayerManager : MonoBehaviour {
         commandMap[CommandType.MoveRight] = new List<KeyCode>(new KeyCode[] { KeyCode.D });
         commandMap[CommandType.RotateLeft] = new List<KeyCode>(new KeyCode[] { KeyCode.LeftArrow, KeyCode.Q });
         commandMap[CommandType.RotateRight] = new List<KeyCode>(new KeyCode[] { KeyCode.RightArrow, KeyCode.E });
-	}
+    }
 
-    void UpdateInput() {
-        foreach (CommandType type in System.Enum.GetValues(typeof(CommandType))) {
+    void UpdateInput()
+    {
+        foreach (CommandType type in System.Enum.GetValues(typeof(CommandType)))
+        {
             currentCommandStates[type].isPressed = false;
             currentCommandStates[type].justPressed = false;
             currentCommandStates[type].justReleased = false;
 
-            foreach (KeyCode key in commandMap[type]) {
+            foreach (KeyCode key in commandMap[type])
+            {
                 if (Input.GetKey(key))
                     currentCommandStates[type].isPressed = true;
                 if (Input.GetKeyDown(key))
@@ -63,32 +75,40 @@ public class PlayerManager : MonoBehaviour {
             }
         }
     }
-	
-	// Update is called once per frame
-	void Update () {
+
+    // Update is called once per frame
+    void Update()
+    {
         UpdateInput();
 
         float step = 2;
 
-        if (!combatManager.isCombatRunning) {
-            if (currentCommandStates[CommandType.MoveForward].justPressed) {
+        if (!CombatManager.isCombatRunning)
+        {
+            if (currentCommandStates[CommandType.MoveForward].justPressed)
+            {
                 transform.position += step * transform.TransformVector(Vector3.forward);
             }
-            if (currentCommandStates[CommandType.MoveBack].justPressed) {
+            if (currentCommandStates[CommandType.MoveBack].justPressed)
+            {
                 transform.position += step * transform.TransformVector(Vector3.back);
             }
-            if (currentCommandStates[CommandType.MoveLeft].justPressed) {
+            if (currentCommandStates[CommandType.MoveLeft].justPressed)
+            {
                 transform.position += step * transform.TransformVector(Vector3.left);
             }
-            if (currentCommandStates[CommandType.MoveRight].justPressed) {
+            if (currentCommandStates[CommandType.MoveRight].justPressed)
+            {
                 transform.position += step * transform.TransformVector(Vector3.right);
             }
-            if (currentCommandStates[CommandType.RotateLeft].justPressed) {
+            if (currentCommandStates[CommandType.RotateLeft].justPressed)
+            {
                 transform.Rotate(Vector3.up, -90);
             }
-            if (currentCommandStates[CommandType.RotateRight].justPressed) {
+            if (currentCommandStates[CommandType.RotateRight].justPressed)
+            {
                 transform.Rotate(Vector3.up, 90);
             }
         }
-	}
+    }
 }
