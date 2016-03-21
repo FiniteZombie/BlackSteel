@@ -20,12 +20,12 @@ RenderSettings:
   m_FogDensity: 0.01
   m_LinearFogStart: 0
   m_LinearFogEnd: 300
-  m_AmbientSkyColor: {r: 0.212, g: 0.227, b: 0.259, a: 1}
+  m_AmbientSkyColor: {r: 0, g: 0, b: 0, a: 1}
   m_AmbientEquatorColor: {r: 0.114, g: 0.125, b: 0.133, a: 1}
   m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
   m_AmbientIntensity: 1
-  m_AmbientMode: 0
-  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  m_AmbientMode: 3
+  m_SkyboxMaterial: {fileID: 0}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -50,8 +50,8 @@ LightmapSettings:
     m_AlbedoBoost: 1
     m_TemporalCoherenceThreshold: 1
     m_EnvironmentLightingMode: 0
-    m_EnableBakedLightmaps: 1
-    m_EnableRealtimeLightmaps: 1
+    m_EnableBakedLightmaps: 0
+    m_EnableRealtimeLightmaps: 0
   m_LightmapEditorSettings:
     serializedVersion: 3
     m_Resolution: 2
@@ -111,8 +111,8 @@ Light:
   serializedVersion: 6
   m_Type: 2
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 1
-  m_Range: 0.74333715
+  m_Intensity: 4
+  m_Range: 1.35
   m_SpotAngle: 30
   m_CookieSize: 10
   m_Shadows:
@@ -141,7 +141,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 46098527}
   m_LocalRotation: {x: 0.40821794, y: -0.23456973, z: 0.109381676, w: 0.87542605}
-  m_LocalPosition: {x: 0.13, y: 0.2, z: 0}
+  m_LocalPosition: {x: 0, y: 0.2, z: 0.2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1781610102}
@@ -216,8 +216,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 696349c7792bd024e9aee36607f1cec3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  WallHeight: 2
-  WallWidth: 2
+  WallHeight: 1
+  WallWidth: 1
   WallPrefab: {fileID: 3324398, guid: d865d5cef8cb37047a53057e428b5943, type: 2}
 --- !u!4 &703467983
 Transform:
@@ -399,8 +399,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MapObject: {fileID: 1864937483}
   CombatManager: {fileID: 1168897081}
-  StartingPosition: {x: 1, y: 1, z: 3}
-  Step: 2
+  StartingPosition: {x: 0.5, y: 0.5, z: 1.5}
+  Step: 1
+  StepTimeInterval: 0.5
+  StepHeight: 0.6
+  StepHeightCurve:
+    serializedVersion: 2
+    m_Curve:
+    - time: 0
+      value: 0
+      inSlope: -0.13499248
+      outSlope: -0.13499248
+      tangentMode: 0
+    - time: 1
+      value: 0
+      inSlope: 0.25559986
+      outSlope: 0.25559986
+      tangentMode: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 0
+  RotateTimeInterval: 0.4
 --- !u!1 &1864937483
 GameObject:
   m_ObjectHideFlags: 0
